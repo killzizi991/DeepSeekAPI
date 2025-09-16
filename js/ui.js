@@ -85,20 +85,24 @@ class UI {
             },
             body: JSON.stringify({
                 model: Storage.getModel(),
-                messages: [{ role: 'user', content: prompt }],
+                messages: [
+                    { role: 'system', content: 'You are a helpful coding assistant' },
+                    { role: 'user', content: prompt }
+                ],
                 temperature: Storage.getTemperature(),
-                max_tokens: Storage.getMaxTokens()
+                max_tokens: Storage.getMaxTokens(),
+                stream: false
             })
         });
 
         if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`API error: ${response.status} - ${errorData.message || response.statusText}`);
         }
 
         const data = await response.json();
         return data.choices[0].message.content;
     }
-
     displayResponse(response) {
         document.getElementById('response-content').textContent = response;
         document.getElementById('code-content').textContent = this.extractCodeFromResponse(response);
