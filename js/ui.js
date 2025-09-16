@@ -43,19 +43,36 @@ class UI {
             return;
         }
 
-        const fileHandler = new FileHandler();
-        const filesContent = await fileHandler.getFormattedFiles();
-        const systemPrompt = document.getElementById('system-prompt').value;
-
-        const fullPrompt = systemPrompt + '\n\n' + filesContent + '\n\n' + userPrompt;
+        this.showLoader();
 
         try {
+            const fileHandler = new FileHandler();
+            const githubApi = new GitHubAPI();
+            
+            let filesContent = '';
+            try {
+                filesContent = await fileHandler.getFormattedFiles();
+                const githubFiles = await githubApi.getSelectedFiles();
+                filesContent += githubFiles;
+            } catch (error) {
+                if (error.message.includes('лимит')) {
+                    this.hideLoader();
+                    return;
+                }
+                throw error;
+            }
+
+            const systemPrompt = document.getElementById('system-prompt').value;
+            const fullPrompt = systemPrompt + '\n\n' + filesContent + '\n\n' + userPrompt;
+
             const response = await this.makeApiRequest(fullPrompt);
             this.displayResponse(response);
             Storage.addToHistory(fullPrompt, response);
             this.loadHistory();
         } catch (error) {
             alert('Ошибка запроса: ' + error.message);
+        } finally {
+            this.hideLoader();
         }
     }
 
@@ -140,5 +157,13 @@ class UI {
         document.getElementById('response-content').textContent = item.response;
         document.getElementById('code-content').textContent = this.extractCodeFromResponse(item.response);
         Prism.highlightAll();
+    }
+
+    showLoader() {
+        document.getElementById('loader').classList.remove('hidden');
+    }
+
+    hideLoader() {
+        document.getElementById('loader').classList.add('hidden');
     }
 }
