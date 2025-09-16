@@ -71,12 +71,20 @@ class FileHandler {
     async addFile(fileHandle, path = null) {
         try {
             const file = await fileHandle.getFile();
+            
+            // Проверка размера файла
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`Файл ${file.name} превышает лимит 5 МБ и не будет добавлен.`);
+                return;
+            }
+            
             const filePath = path || file.name;
             
             if (this.isValidFile(filePath)) {
                 this.selectedFiles.set(filePath, {
                     handle: fileHandle,
-                    content: await file.text()
+                    content: await file.text(),
+                    size: file.size
                 });
             }
         } catch (error) {
@@ -110,7 +118,10 @@ class FileHandler {
 
     updateFileTree() {
         this.fileTree.innerHTML = '';
+        let totalSize = 0;
+        
         this.selectedFiles.forEach((file, path) => {
+            totalSize += file.size;
             const div = document.createElement('div');
             div.className = 'file-item';
             
@@ -125,12 +136,27 @@ class FileHandler {
             });
 
             const label = document.createElement('label');
-            label.textContent = path;
+            label.textContent = `${path} (${this.formatFileSize(file.size)})`;
 
             div.appendChild(checkbox);
             div.appendChild(label);
             this.fileTree.appendChild(div);
         });
+
+        // Предупреждение о большом размере
+        const sizeWarning = document.getElementById('size-warning');
+        if (totalSize > 5 * 1024 * 1024) {
+            sizeWarning.classList.remove('hidden');
+            sizeWarning.textContent = `Внимание: Общий размер файлов ${this.formatFileSize(totalSize)} превышает 5 МБ.`;
+        } else {
+            sizeWarning.classList.add('hidden');
+        }
+    }
+
+    formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
     }
 
     filterFiles(filter) {
@@ -140,13 +166,24 @@ class FileHandler {
     clearFiles() {
         this.selectedFiles.clear();
         this.fileTree.innerHTML = '';
+        document.getElementById('size-warning').classList.add('hidden');
     }
 
     async getFormattedFiles() {
         let formatted = '';
+        let totalSize = 0;
+        
         for (const [path, file] of this.selectedFiles) {
+            totalSize += file.content.length;
             formatted += `[file name]: ${path}\n[file content begin]\n${file.content}\n[file content end]\n\n`;
         }
+
+        if (totalSize > 5 * 1024 * 1024) {
+            if (!confirm(`Общий размер данных ${this.formatFileSize(totalSize)} превышает 5 МБ. Продолжить?`)) {
+                throw new Error('Размер данных превышает лимит');
+            }
+        }
+
         return formatted;
     }
 }
