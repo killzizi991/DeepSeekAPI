@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="./lib/prism.css">
 </head>
 <body>
+    <div id="loader" class="hidden">Загрузка...</div>
+    
     <div class="container">
         <header class="header">
             <h1>DeepSeek Coder Assistant</h1>
@@ -49,6 +51,7 @@
             <div class="drop-zone" id="drop-zone">
                 Перетащите файлы или папки сюда
             </div>
+            <div id="size-warning" class="hidden" style="color: red; margin: 10px 0;"></div>
             <div class="file-tree" id="file-tree"></div>
         </section>
 
@@ -58,6 +61,7 @@
                 <input type="text" id="repo-url" placeholder="URL репозитория (только публичные)">
                 <button id="load-repo">Загрузить</button>
             </div>
+            <div id="github-loader" class="hidden">Загрузка репозитория...</div>
             <div class="branch-selector hidden" id="branch-selector">
                 <label for="branch">Ветка:</label>
                 <select id="branch"></select>
