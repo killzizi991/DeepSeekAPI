@@ -1,1 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "header header"
+        "settings history"
+        "files history"
+        "github history"
+        "prompt history"
+        "response history";
+    gap: 20px;
+    padding: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.header {
+    grid-area: header;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.settings-panel {
+    grid-area: settings;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+input, select, textarea, button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.file-section, .github-section, .prompt-section, .response-section {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.file-section {
+    grid-area: files;
+}
+
+.github-section {
+    grid-area: github;
+}
+
+.prompt-section {
+    grid-area: prompt;
+}
+
+.response-section {
+    grid-area: response;
+}
+
+.history-sidebar {
+    grid-area: history;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.drop-zone {
+    border: 2px dashed #007bff;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.drop-zone.active {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.file-tree, .repo-tree {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.file-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.response-tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background: #eee;
+    border: none;
+    cursor: pointer;
+}
+
+.tab-button.active {
+    background: #007bff;
+    color: white;
+}
+
+.tab-content {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#response-content {
+    white-space: pre-wrap;
+}
+
+#history-list {
+    list-style: none;
+}
+
+#history-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+#history-list li:hover {
+    background: #f0f0f0;
+}
+
+@media (max-width: 1200px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "settings"
+            "files"
+            "github"
+            "prompt"
+            "response"
+            "history";
+    }
+    
+    .history-sidebar {
+        max-height: 300px;
+    }
+}
