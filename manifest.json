@@ -17,5 +17,9 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ]
+    ],
+    "categories": ["development", "productivity", "utilities"],
+    "lang": "ru",
+    "orientation": "any",
+    "scope": "/"
 }
