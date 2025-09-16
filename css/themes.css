@@ -1,1 +1,63 @@
+:root {
+    --bg-color: #f4f4f4;
+    --text-color: #333;
+    --panel-bg: white;
+    --border-color: #ddd;
+    --primary-color: #007bff;
+    --hover-color: #0056b3;
+}
 
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #f4f4f4;
+    --panel-bg: #2d2d2d;
+    --border-color: #444;
+    --primary-color: #4da6ff;
+    --hover-color: #80bfff;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.settings-panel, .file-section, .github-section, .prompt-section, .response-section, .history-sidebar {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+}
+
+input, select, textarea {
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+button {
+    background-color: var(--primary-color);
+}
+
+button:hover {
+    background-color: var(--hover-color);
+}
+
+.tab-button {
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+}
+
+.tab-button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.file-tree, .repo-tree, .tab-content {
+    border: 1px solid var(--border-color);
+}
+
+#history-list li {
+    border-bottom: 1px solid var(--border-color);
+}
+
+#history-list li:hover {
+    background-color: var(--hover-color);
+}
