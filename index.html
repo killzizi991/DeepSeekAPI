@@ -1,1 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek Coder Assistant</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/themes.css">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./lib/prism.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>DeepSeek Coder Assistant</h1>
+        </header>
+        
+        <section class="settings-panel">
+            <div class="input-group">
+                <label for="api-key">API Key:</label>
+                <input type="password" id="api-key" placeholder="Введите ваш API ключ">
+            </div>
+            <div class="input-group">
+                <label for="model">Модель:</label>
+                <select id="model">
+                    <option value="deepseek-chat">deepseek-chat</option>
+                    <option value="deepseek-reasoner">deepseek-reasoner</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="temperature">Temperature:</label>
+                <input type="number" id="temperature" min="0" max="1" step="0.1" value="0.7">
+            </div>
+            <div class="input-group">
+                <label for="max-tokens">Max Tokens:</label>
+                <input type="number" id="max-tokens" min="1" max="4096" value="2048">
+            </div>
+            <button id="save-settings">Сохранить настройки</button>
+        </section>
 
+        <section class="file-section">
+            <h2>Файлы</h2>
+            <div class="file-actions">
+                <button id="select-files">Выбрать файлы</button>
+                <button id="select-folder">Выбрать папку</button>
+                <input type="text" id="file-filter" placeholder="Фильтр по расширениям (например, .js,.html)">
+                <button id="clear-files">Очистить</button>
+            </div>
+            <div class="drop-zone" id="drop-zone">
+                Перетащите файлы или папки сюда
+            </div>
+            <div class="file-tree" id="file-tree"></div>
+        </section>
+
+        <section class="github-section">
+            <h2>GitHub репозиторий</h2>
+            <div class="input-group">
+                <input type="text" id="repo-url" placeholder="URL репозитория (только публичные)">
+                <button id="load-repo">Загрузить</button>
+            </div>
+            <div class="branch-selector hidden" id="branch-selector">
+                <label for="branch">Ветка:</label>
+                <select id="branch"></select>
+            </div>
+            <div class="repo-tree" id="repo-tree"></div>
+        </section>
+
+        <section class="prompt-section">
+            <h2>Запрос</h2>
+            <textarea id="system-prompt" placeholder="Системный промпт (опционально)"></textarea>
+            <textarea id="user-prompt" placeholder="Ваш запрос"></textarea>
+            <button id="send-request">Отправить</button>
+        </section>
+
+        <section class="response-section">
+            <h2>Ответ</h2>
+            <div class="response-tabs">
+                <button class="tab-button active" data-tab="response">Ответ</button>
+                <button class="tab-button" data-tab="code">Код</button>
+            </div>
+            <div class="tab-content" id="response-tab">
+                <div id="response-content"></div>
+            </div>
+            <div class="tab-content hidden" id="code-tab">
+                <pre><code class="language-javascript" id="code-content"></code></pre>
+                <button id="copy-code">Копировать код</button>
+                <button id="download-code">Скачать изменения</button>
+            </div>
+        </section>
+
+        <aside class="history-sidebar">
+            <h2>История запросов</h2>
+            <ul id="history-list"></ul>
+        </aside>
+    </div>
+
+    <script src="./lib/prism.js"></script>
+    <script src="./js/storage.js"></script>
+    <script src="./js/fileHandler.js"></script>
+    <script src="./js/githubApi.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
