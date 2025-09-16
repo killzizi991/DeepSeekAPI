@@ -43,41 +43,28 @@ class UI {
             return;
         }
 
-        this.showLoader();
+        const fileHandler = new FileHandler();
+        const filesContent = await fileHandler.getFormattedFiles();
+        const systemPrompt = document.getElementById('system-prompt').value;
+
+        const messages = [];
+        if (systemPrompt) {
+            messages.push({ role: 'system', content: systemPrompt });
+        }
+        messages.push({ role: 'user', content: filesContent + '\n\n' + userPrompt });
 
         try {
-            const fileHandler = new FileHandler();
-            const githubApi = new GitHubAPI();
-            
-            let filesContent = '';
-            try {
-                filesContent = await fileHandler.getFormattedFiles();
-                const githubFiles = await githubApi.getSelectedFiles();
-                filesContent += githubFiles;
-            } catch (error) {
-                if (error.message.includes('лимит')) {
-                    this.hideLoader();
-                    return;
-                }
-                throw error;
-            }
-
-            const systemPrompt = document.getElementById('system-prompt').value;
-            const fullPrompt = systemPrompt + '\n\n' + filesContent + '\n\n' + userPrompt;
-
-            const response = await this.makeApiRequest(fullPrompt);
+            const response = await this.makeApiRequest(messages);
             this.displayResponse(response);
-            Storage.addToHistory(fullPrompt, response);
+            Storage.addToHistory(userPrompt, response);
             this.loadHistory();
         } catch (error) {
             alert('Ошибка запроса: ' + error.message);
-        } finally {
-            this.hideLoader();
         }
     }
 
-    async makeApiRequest(prompt) {
-        const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    async makeApiRequest(messages) {
+        const response = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -85,24 +72,20 @@ class UI {
             },
             body: JSON.stringify({
                 model: Storage.getModel(),
-                messages: [
-                    { role: 'system', content: 'You are a helpful coding assistant' },
-                    { role: 'user', content: prompt }
-                ],
+                messages: messages,
                 temperature: Storage.getTemperature(),
-                max_tokens: Storage.getMaxTokens(),
-                stream: false
+                max_tokens: Storage.getMaxTokens()
             })
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`API error: ${response.status} - ${errorData.message || response.statusText}`);
+            throw new Error(`API error: ${response.status}`);
         }
 
         const data = await response.json();
         return data.choices[0].message.content;
     }
+
     displayResponse(response) {
         document.getElementById('response-content').textContent = response;
         document.getElementById('code-content').textContent = this.extractCodeFromResponse(response);
@@ -161,13 +144,5 @@ class UI {
         document.getElementById('response-content').textContent = item.response;
         document.getElementById('code-content').textContent = this.extractCodeFromResponse(item.response);
         Prism.highlightAll();
-    }
-
-    showLoader() {
-        document.getElementById('loader').classList.remove('hidden');
-    }
-
-    hideLoader() {
-        document.getElementById('loader').classList.add('hidden');
     }
 }
